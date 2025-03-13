@@ -10,7 +10,7 @@ resource "aws_eks_cluster" "eks_test_cluster" {
   vpc_config {
     subnet_ids = [
       "subnet-0fc6ea4c93a919961", # tatsukoni-demo-subnet-private-1a
-      "subnet-0cdf0dfdbaff1ff9e"  #tatsukoni-demo-subnet-private-1c
+      "subnet-0cdf0dfdbaff1ff9e"  # tatsukoni-demo-subnet-private-1c
     ]
     endpoint_private_access = true
     endpoint_public_access  = true
@@ -23,7 +23,7 @@ resource "aws_eks_node_group" "node_group" {
   node_role_arn   = aws_iam_role.node_role.arn
   subnet_ids      = [
     "subnet-0fc6ea4c93a919961", # tatsukoni-demo-subnet-private-1a
-    "subnet-0cdf0dfdbaff1ff9e"  #tatsukoni-demo-subnet-private-1c
+    "subnet-0cdf0dfdbaff1ff9e"  # tatsukoni-demo-subnet-private-1c
   ]
   capacity_type   = "SPOT"
 
@@ -43,3 +43,13 @@ resource "aws_eks_node_group" "node_group" {
     max_unavailable = 1
   }
 }
+
+# resource "aws_launch_template" "node_group" {
+#   name = "eks-test-ng-template"
+
+#   metadata_options {
+#     http_endpoint = "enabled"
+#     http_tokens           = "required"
+#     http_put_response_hop_limit = 2
+#   }
+# }
