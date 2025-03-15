@@ -21,11 +21,15 @@ resource "aws_eks_node_group" "node_group" {
   cluster_name    = aws_eks_cluster.eks_test_cluster.name
   node_group_name = "eks-test-ng"
   node_role_arn   = aws_iam_role.node_role.arn
-  subnet_ids      = [
+  subnet_ids = [
     "subnet-0fc6ea4c93a919961", # tatsukoni-demo-subnet-private-1a
     "subnet-0cdf0dfdbaff1ff9e"  # tatsukoni-demo-subnet-private-1c
   ]
-  capacity_type   = "SPOT"
+  capacity_type = "SPOT"
+  launch_template {
+    id      = aws_launch_template.node_group.id
+    version = aws_launch_template.node_group.latest_version
+  }
 
   scaling_config {
     desired_size = 1
@@ -44,12 +48,12 @@ resource "aws_eks_node_group" "node_group" {
   }
 }
 
-# resource "aws_launch_template" "node_group" {
-#   name = "eks-test-ng-template"
+resource "aws_launch_template" "node_group" {
+  name = "eks-test-ng-template"
 
-#   metadata_options {
-#     http_endpoint = "enabled"
-#     http_tokens           = "required"
-#     http_put_response_hop_limit = 2
-#   }
-# }
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
+}
