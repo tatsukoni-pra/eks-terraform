@@ -1,10 +1,10 @@
 ######
 # Nat Gateway
 ######
-import {
-  to = aws_nat_gateway.nat_tatsukoni_test
-  id = "nat-0187fb64b328702ef"
-}
+# import {
+#   to = aws_nat_gateway.nat_tatsukoni_test
+#   id = "nat-0187fb64b328702ef"
+# }
 
 ######
 # Private Subnet
