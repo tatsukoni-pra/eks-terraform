@@ -43,6 +43,7 @@ resource "aws_route_table" "private" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat_tatsukoni_test.id
   }
+  // route = []
 
   tags = {
     Name = "tatsukoni-demo-private-table"
