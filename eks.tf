@@ -48,6 +48,37 @@ resource "aws_eks_node_group" "node_group" {
   }
 }
 
+resource "aws_eks_node_group" "node_group_arm" {
+  cluster_name    = aws_eks_cluster.eks_test_cluster.name
+  node_group_name = "eks-test-ng-arm"
+  node_role_arn   = aws_iam_role.node_role.arn
+  subnet_ids = [
+    "subnet-0fc6ea4c93a919961", # tatsukoni-demo-subnet-private-1a
+    "subnet-0cdf0dfdbaff1ff9e"  # tatsukoni-demo-subnet-private-1c
+  ]
+  capacity_type = "SPOT"
+  launch_template {
+    id      = aws_launch_template.node_group.id
+    version = aws_launch_template.node_group.latest_version
+  }
+
+  scaling_config {
+    desired_size = 1
+    max_size     = 2
+    min_size     = 1
+  }
+  instance_types = [
+    "t4g.small"
+  ]
+  # https://aws.amazon.com/jp/bottlerocket/?amazon-bottlerocket-whats-new.sort-by=item.additionalFields.postDateTime&amazon-bottlerocket-whats-new.sort-order=desc
+  ami_type = "BOTTLEROCKET_ARM_64"
+
+  update_config {
+    # Desired max number of unavailable worker nodes during node group update
+    max_unavailable = 1
+  }
+}
+
 resource "aws_launch_template" "node_group" {
   name = "eks-test-ng-template"
 
