@@ -25,7 +25,7 @@ resource "aws_eks_node_group" "node_group" {
     "subnet-0fc6ea4c93a919961", # tatsukoni-demo-subnet-private-1a
     "subnet-0cdf0dfdbaff1ff9e"  # tatsukoni-demo-subnet-private-1c
   ]
-  capacity_type = "SPOT"
+  capacity_type = "ON_DEMAND"
   launch_template {
     id      = aws_launch_template.node_group.id
     version = aws_launch_template.node_group.latest_version
@@ -56,7 +56,7 @@ resource "aws_eks_node_group" "node_group_arm" {
     "subnet-0fc6ea4c93a919961", # tatsukoni-demo-subnet-private-1a
     "subnet-0cdf0dfdbaff1ff9e"  # tatsukoni-demo-subnet-private-1c
   ]
-  capacity_type = "SPOT"
+  capacity_type = "ON_DEMAND"
   launch_template {
     id      = aws_launch_template.node_group.id
     version = aws_launch_template.node_group.latest_version
