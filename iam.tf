@@ -86,6 +86,38 @@ resource "aws_iam_role_policy_attachment" "node_role_AmazonSSMManagedInstanceCor
 }
 
 ######
+# Node Role に付与するカスタムポリシー
+# ECRへのアクセス権限を付与
+# https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/ECR_on_EKS.html
+######
+resource "aws_iam_policy" "node_policy" {
+  name        = "eks-test-node-policy"
+  description = "IAM policy for AWS Load Balancer Controller"
+  policy      = <<EOF
+{
+   "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:BatchGetImage",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:GetAuthorizationToken"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+  EOF
+}
+
+resource "aws_iam_role_policy_attachment" "node_role_custom_policy" {
+  role       = aws_iam_role.node_role.name
+  policy_arn = aws_iam_policy.node_policy.arn
+}
+
+######
 # AWS Load Balancer Controller用 IAM Policy
 # https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json
 ######

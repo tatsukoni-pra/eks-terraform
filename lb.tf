@@ -74,3 +74,41 @@ resource "aws_lb_target_group" "argocd" {
     Name = "tg-argocd"
   }
 }
+
+######
+# k8s Application
+resource "aws_lb_listener_rule" "k8s_application" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 200
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.k8s_application.arn
+  }
+
+  condition {
+    host_header {
+      values = ["k8s-application.awsometatsukoni.com"]
+    }
+  }
+}
+
+resource "aws_lb_target_group" "k8s_application" {
+  name        = "tg-k8s-application"
+  target_type = "ip"
+  vpc_id      = "vpc-025645e04c921bd7c" # tatsukoni-demo-vpc
+  port        = "80"
+  protocol    = "HTTP"
+
+  health_check {
+    path     = "/"
+    port     = "traffic-port"
+    protocol = "HTTP"
+    enabled  = "true"
+    matcher  = "200"
+  }
+
+  tags = {
+    Name = "tg-k8s-application"
+  }
+}

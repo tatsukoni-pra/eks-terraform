@@ -13,3 +13,15 @@ resource "aws_route53_record" "argocd" {
   }
   depends_on = [aws_lb.eks_test_alb]
 }
+
+resource "aws_route53_record" "k8s_application" {
+  zone_id = data.aws_route53_zone.awsometatsukoni.zone_id
+  name    = "k8s-application"
+  type    = "A"
+  alias {
+    name                   = aws_lb.eks_test_alb.dns_name
+    zone_id                = aws_lb.eks_test_alb.zone_id
+    evaluate_target_health = false
+  }
+  depends_on = [aws_lb.eks_test_alb]
+}
