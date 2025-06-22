@@ -105,3 +105,50 @@ resource "aws_iam_role_policy_attachment" "external_secrets_operator" {
   role       = aws_iam_role.external_secrets_operator.name
   policy_arn = aws_iam_policy.external_secrets_operator.arn
 }
+
+######
+# デモアプリケーション用 IAM Policy
+######
+data "aws_iam_policy_document" "k8s_application" {
+  statement {
+    actions   = ["s3:*"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "k8s_application" {
+  name        = "K8sApplicationPolicy"
+  policy      = data.aws_iam_policy_document.k8s_application.json
+}
+
+######
+# デモアプリケーション用 IAM Role
+######
+resource "aws_iam_role" "k8s_application" {
+  name               = "K8sApplicationRole"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "${aws_iam_openid_connect_provider.cluster.arn}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${aws_iam_openid_connect_provider.cluster.url}:aud": "sts.amazonaws.com",
+          "${aws_iam_openid_connect_provider.cluster.url}:sub": "system:serviceaccount:k8s-application:k8s-application-sa"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "k8s_application" {
+  role       = aws_iam_role.k8s_application.name
+  policy_arn = aws_iam_policy.k8s_application.arn
+}
