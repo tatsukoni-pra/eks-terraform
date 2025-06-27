@@ -37,7 +37,7 @@ resource "aws_eks_node_group" "node_group" {
     min_size     = 1
   }
   instance_types = [
-    "m7a.medium"
+    "m7a.large"
   ]
   # https://aws.amazon.com/jp/bottlerocket/?amazon-bottlerocket-whats-new.sort-by=item.additionalFields.postDateTime&amazon-bottlerocket-whats-new.sort-order=descAdd commentMore actions
   ami_type = "BOTTLEROCKET_x86_64"
@@ -63,12 +63,12 @@ resource "aws_eks_node_group" "node_group_arm" {
   }
 
   scaling_config {
-    desired_size = 3
-    max_size     = 3
-    min_size     = 3
+    desired_size = 1
+    max_size     = 1
+    min_size     = 1
   }
   instance_types = [
-    "m7g.medium"
+    "m7g.large"
   ]
   # https://aws.amazon.com/jp/bottlerocket/?amazon-bottlerocket-whats-new.sort-by=item.additionalFields.postDateTime&amazon-bottlerocket-whats-new.sort-order=desc
   ami_type = "BOTTLEROCKET_ARM_64"
