@@ -152,3 +152,35 @@ resource "aws_iam_role_policy_attachment" "k8s_application" {
   role       = aws_iam_role.k8s_application.name
   policy_arn = aws_iam_policy.k8s_application.arn
 }
+
+######
+# Argo CD Image Updater用 IAM Role
+######
+resource "aws_iam_role" "argocd_image_updater" {
+  name               = "argocd-image-updater"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "${aws_iam_openid_connect_provider.cluster.arn}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${aws_iam_openid_connect_provider.cluster.url}:aud": "sts.amazonaws.com",
+          "${aws_iam_openid_connect_provider.cluster.url}:sub": "system:serviceaccount:argocd:argocd-image-updater"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "argocd_image_updater" {
+  role       = aws_iam_role.argocd_image_updater.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
